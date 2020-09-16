@@ -5,7 +5,7 @@ const USERPHONE = `917834811114`;
 const PASSWORD = 'secret1234';
 const BASE_URL = 'http://glific.test:4000';
 
-export const post_gql = (query, access_token) => {
+export const post_gql = (query: string, access_token: string) => {
      let headers = {
          'Authorization': access_token,
          "Content-Type": "application/json"

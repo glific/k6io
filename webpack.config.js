@@ -4,8 +4,7 @@ module.exports = {
   mode: 'development',
   context: path.join(__dirname, 'src'),
   entry: {
-    test1: './test1.ts', 
-    test2: './test2.ts'
+      tag: './tag.ts',
   },
   output: {
     path: path.join(__dirname, 'dist'),

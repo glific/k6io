@@ -5,7 +5,8 @@ module.exports = {
   context: path.join(__dirname, 'src'),
   entry: {
       tag: './tag.ts',
-      message: './message.ts'
+      message: './message.ts',
+      flow: './flow.ts'
   },
   output: {
     path: path.join(__dirname, 'dist'),

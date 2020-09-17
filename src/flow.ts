@@ -11,7 +11,7 @@ const BASE_URL = 'http://glific.test:4000';
 
 export let options: Options = {
   // vus: 3,
-  // iterations: 3
+  iterations: 3
 };
 
 export const setup = () => setup_helper()
@@ -26,7 +26,9 @@ export default function (access_token: string) {
     'received flow keyword successfully': () =>
       res.status === 200
   });
-  sleep(1)
+  // We need to provide 2 sec. sleep in production config
+  // else search result responds with empty message list
+  sleep(2)
 
   let search_query_response = search_query(access_token, contacts[contact_index].id);
   check(search_query_response, {
@@ -39,7 +41,7 @@ export default function (access_token: string) {
     'received flow message successfully': () =>
       res_2.status === 200
   });
-  sleep(1)
+  sleep(2)
 
   let search_query_response_2 = search_query(access_token, contacts[contact_index].id);
   check(search_query_response_2, {

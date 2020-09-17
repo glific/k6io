@@ -1,8 +1,9 @@
 import http from "k6/http";
-import { sleep, check } from 'k6';
+import { check } from 'k6';
 import { Options } from 'k6/options';
 
 import {
+  sleep_delay,
   post_gql,
   setup as setup_helper
 } from './helpers';
@@ -27,7 +28,7 @@ export default function (access_token: string) {
     'stored outbound message successfully': () =>
       message_mutation_response.createAndSendMessage.message.body === "new message"
   });
-  sleep(1)
+  sleep_delay()
 
   let message_query_response = get_message_by_id_query(access_token, message_mutation_response.createAndSendMessage.message.id);
   check(message_query_response, {
@@ -40,7 +41,7 @@ export default function (access_token: string) {
     'stored inbound message successfully': () =>
       res.status === 200
   });
-  sleep(2)
+  sleep_delay()
 
   let search_query_response = search_query(access_token, contact_id);
   check(search_query_response, {

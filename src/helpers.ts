@@ -1,9 +1,13 @@
-import { check } from 'k6';
+import { check, sleep } from 'k6';
 import http from "k6/http";
 
 const USERPHONE = `917834811114`;
 const PASSWORD = 'secret1234';
 const BASE_URL = 'http://glific.test:4000';
+
+export const sleep_delay = () => {
+    sleep(Math.random() * 3 + 1);
+}
 
 export const post_gql = (query: string, access_token: string, variables: any) => {
      let headers = {

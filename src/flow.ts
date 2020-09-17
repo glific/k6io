@@ -1,8 +1,9 @@
 import http from "k6/http";
-import { sleep, check } from 'k6';
+import { check } from 'k6';
 import { Options } from 'k6/options';
 
 import {
+  sleep_delay,
   post_gql,
   setup as setup_helper
 } from './helpers';
@@ -28,7 +29,7 @@ export default function (access_token: string) {
   });
   // We need to provide 2 sec. sleep in production config
   // else search result responds with empty message list
-  sleep(2)
+  sleep_delay()
 
   let search_query_response = search_query(access_token, contacts[contact_index].id);
   check(search_query_response, {
@@ -41,7 +42,7 @@ export default function (access_token: string) {
     'received flow message successfully': () =>
       res_2.status === 200
   });
-  sleep(2)
+  sleep_delay()
 
   let search_query_response_2 = search_query(access_token, contacts[contact_index].id);
   check(search_query_response_2, {

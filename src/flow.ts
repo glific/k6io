@@ -19,7 +19,7 @@ export const setup = () => setup_helper()
 export default function (access_token: string) {
   let contacts_query_response = contacts_query(access_token);
   let contacts = contacts_query_response.contacts
-  let contact_index = 0
+  let contact_index = getRandomInteger(0, contacts.length - 1)
 
   let res = inbound_message("help", contacts[contact_index])
   check(res, {
@@ -46,6 +46,10 @@ export default function (access_token: string) {
     'sent another response message successfully': () =>
       search_query_response_2.search[0].messages[0].body !== "1"
   });
+}
+
+function getRandomInteger(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
 function contacts_query(access_token: string) {

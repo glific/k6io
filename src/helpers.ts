@@ -5,14 +5,14 @@ const USERPHONE = `917834811114`;
 const PASSWORD = 'secret1234';
 const BASE_URL = 'http://glific.test:4000';
 
-export const post_gql = (query, access_token) => {
+export const post_gql = (query: string, access_token: string, variables: any) => {
      let headers = {
          'Authorization': access_token,
          "Content-Type": "application/json"
      };
 
      let res = http.post(`${BASE_URL}/api`,
-         JSON.stringify({query: query}), {headers: headers}
+         JSON.stringify({ query, variables}), {headers: headers}
      );
 
      check(res, {
@@ -20,10 +20,10 @@ export const post_gql = (query, access_token) => {
      });
 
      // console.log(JSON.stringify(res.json('data')));
-     if (res.status !== 200) {
+    if (res.status !== 200) {
          console.log(JSON.stringify(res.body));
-     };
-
+    };
+    
      return res.json('data');
 };
 

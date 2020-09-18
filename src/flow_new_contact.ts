@@ -11,8 +11,8 @@ import {
 const BASE_URL = 'http://glific.test:4000';
 
 export let options: Options = {
-  // vus: 3,
-  iterations: 1
+  vus: 3,
+  iterations: 3
 };
 
 export const setup = () => setup_helper()
@@ -20,7 +20,7 @@ export const setup = () => setup_helper()
 export default function (access_token: string) {
   let contacts_query_response = contacts_query(access_token);
   let contacts = contacts_query_response.contacts
-  let contact_index = getRandomInteger(0, contacts.length - 1)
+  let contact_index = __VU - 1
 
   let list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
   let contact_messages_count = list_messages_query_response.messages.length

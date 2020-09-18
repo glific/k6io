@@ -22,32 +22,31 @@ export default function (access_token: string) {
   let contacts = contacts_query_response.contacts
   let contact_index = getRandomInteger(0, contacts.length - 1)
 
-  let res = inbound_message("help", contacts[contact_index])
-  check(res, {
+  let flow_keyword = "help"
+  let response = inbound_message(flow_keyword, contacts[contact_index])
+  check(response, {
     'received flow keyword successfully': () =>
-      res.status === 200
+      response.status === 200
   });
-  // We need to provide 2 sec. sleep in production config
-  // else search result responds with empty message list
   sleep_delay()
 
   let search_query_response = search_query(access_token, contacts[contact_index].id);
   check(search_query_response, {
     'sent flow response message successfully': () =>
-      search_query_response.search[0].messages[0].body !== "help"
+      search_query_response.search[0].messages[0].body !== flow_keyword
   });
 
-  let res_2 = inbound_message("1", contacts[contact_index])
-  check(res_2, {
+  let response_2 = inbound_message("2", contacts[contact_index])
+  check(response_2, {
     'received flow message successfully': () =>
-      res_2.status === 200
+      response_2.status === 200
   });
   sleep_delay()
 
   let search_query_response_2 = search_query(access_token, contacts[contact_index].id);
   check(search_query_response_2, {
     'sent another response message successfully': () =>
-      search_query_response_2.search[0].messages[0].body !== "1"
+      search_query_response_2.search[0].messages[0].body !== "2"
   });
 }
 

@@ -6,7 +6,8 @@ module.exports = {
   entry: {
       tag: './tag.ts',
       message: './message.ts',
-      flow: './flow.ts'
+      flow: './flow.ts',
+      flow_new_contact: './flow_new_contact.ts'
   },
   output: {
     path: path.join(__dirname, 'dist'),

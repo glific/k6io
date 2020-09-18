@@ -6,7 +6,7 @@ const PASSWORD = 'secret1234';
 const BASE_URL = 'http://glific.test:4000';
 
 export const sleep_delay = () => {
-    sleep(Math.random() * 3 + 1);
+    sleep(Math.random() * 3 + 2);
 }
 
 export const post_gql = (query: string, access_token: string, variables: any) => {
@@ -27,7 +27,7 @@ export const post_gql = (query: string, access_token: string, variables: any) =>
     if (res.status !== 200) {
          console.log(JSON.stringify(res.body));
     };
-    
+
      return res.json('data');
 };
 

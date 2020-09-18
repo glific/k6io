@@ -11,8 +11,8 @@ import {
 const BASE_URL = 'http://glific.test:4000';
 
 export let options: Options = {
-  // vus: 3,
-  iterations: 3
+    vus: 10,
+    iterations: 20
 };
 
 export const setup = () => setup_helper()
@@ -43,9 +43,9 @@ export default function (access_token: string) {
   });
   sleep_delay()
 
-  let search_query_response_2 = search_query(access_token, contacts[contact_index].id);
+    let search_query_response_2 = search_query(access_token, contacts[contact_index].id);
   check(search_query_response_2, {
-    'sent another response message successfully': () =>
+      'sent another response message successfully': () =>
       search_query_response_2.search[0].messages[0].body !== "2"
   });
 }
@@ -65,7 +65,7 @@ function contacts_query(access_token: string) {
     }
   `;
 
-  let filter = { providerStatus: "SESSION" }
+  let filter = { providerStatus: "SESSION_AND_HSM" }
   let variables = { filter }
 
   return post_gql(query, access_token, variables)
@@ -128,12 +128,12 @@ function search_query(access_token: string, contact_id: number) {
             label
           }
         }
-    
+
         contact {
           name
         }
       }
-    }  
+    }
   `;
 
   let searchFilter = {

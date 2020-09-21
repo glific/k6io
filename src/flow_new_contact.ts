@@ -27,75 +27,75 @@ export default function (data: any) {
   let contacts = data.contacts;
   let contact_index = __VU - 1
 
-  let count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  let contact_messages_count = count_messages_query_response.countMessages
+  test_new_contact_flow(access_token, contacts[contact_index])
+}
+
+function test_new_contact_flow(access_token: string, contact: any) {
+  let res = count_messages_query(access_token, contact);
+  let contact_messages_count = res.countMessages
 
   let flow_keyword = "newcontact"
-  let response = inbound_message(flow_keyword, contacts[contact_index])
-  check(response, {
-    'received flow keyword newcontact': () =>
-      response.status === 200
-  });
+  inbound_message(flow_keyword, contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'sent newcontact flow messages': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 3
+      res.countMessages == contact_messages_count + 3
   });
 
-  response = inbound_message("2", contacts[contact_index])
+  inbound_message("2", contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'received response and sent registration flow message for full name': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 6
+      res.countMessages == contact_messages_count + 6
   });
 
-  response = inbound_message(contacts[contact_index].name, contacts[contact_index])
+  inbound_message(contact.name, contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'received response and sent registration flow message for age group': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 8
+      res.countMessages == contact_messages_count + 8
   });
 
-  response = inbound_message("4", contacts[contact_index])
+  inbound_message("4", contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'received response and sent message for sol activity': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 11
+      res.countMessages == contact_messages_count + 11
   });
 
-  response = inbound_message("9", contacts[contact_index])
+  inbound_message("9", contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'received response and sent message for help flow': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 13
+      res.countMessages == contact_messages_count + 13
   });
 
-  response = inbound_message("2", contacts[contact_index])
+  inbound_message("2", contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'received response and sent second message for help flow successfully': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 15
+      res.countMessages == contact_messages_count + 15
   });
 
-  response = inbound_message("Hi, is this flow complete now?", contacts[contact_index])
+  inbound_message("Hi, is this flow complete now?", contact)
   sleep_delay()
 
-  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
-  check(count_messages_query_response, {
+  res = count_messages_query(access_token, contact);
+  check(res, {
     'Flow is completed and no message is sent': () =>
-      count_messages_query_response.countMessages == contact_messages_count + 16
+      res.countMessages == contact_messages_count + 16
   });
 }
 

@@ -11,15 +11,20 @@ import {
 const BASE_URL = 'http://glific.test:4000';
 
 export let options: Options = {
-  vus: 3,
-  iterations: 3
+  vus: 5,
+  iterations: 5
 };
 
-export const setup = () => setup_helper()
-
-export default function (access_token: string) {
+export const setup = () => {
+  let access_token = setup_helper();
   let contacts_query_response = contacts_query(access_token);
-  let contacts = contacts_query_response.contacts
+  let contacts = contacts_query_response.contacts;
+  return { access_token, contacts };
+}
+
+export default function (data: any) {
+  let access_token = data.access_token;
+  let contacts = data.contacts;
   let contact_index = __VU - 1
 
   let list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
@@ -133,7 +138,7 @@ function contacts_query(access_token: string) {
     }
   `;
 
-  let filter = { providerStatus: "SESSION" }
+  let filter = { providerStatus: "SESSION_AND_HSM" }
   let variables = { filter }
 
   return post_gql(query, access_token, variables)

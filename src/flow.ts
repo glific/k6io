@@ -15,12 +15,17 @@ export let options: Options = {
     iterations: 20
 };
 
-export const setup = () => setup_helper()
-
-export default function (access_token: string) {
+export const setup = () => {
+  let access_token = setup_helper();
   let contacts_query_response = contacts_query(access_token);
-  let contacts = contacts_query_response.contacts
-  let contact_index = getRandomInteger(0, contacts.length - 1)
+  let contacts = contacts_query_response.contacts;
+  return { access_token, contacts };
+}
+
+export default function (data: any) {
+  let access_token = data.access_token;
+  let contacts = data.contacts;
+  let contact_index = getRandomInteger(0, contacts.length - 1);
 
   let flow_keyword = "help"
   let response = inbound_message(flow_keyword, contacts[contact_index])
@@ -32,21 +37,21 @@ export default function (access_token: string) {
 
   let search_query_response = search_query(access_token, contacts[contact_index].id);
   check(search_query_response, {
-    'sent flow response message successfully': () =>
+    'sent first flow message successfully': () =>
       search_query_response.search[0].messages[0].body !== flow_keyword
   });
 
-  let response_2 = inbound_message("2", contacts[contact_index])
-  check(response_2, {
-    'received flow message successfully': () =>
-      response_2.status === 200
+  response = inbound_message("2", contacts[contact_index])
+  check(response, {
+    'received first response message successfully': () =>
+      response.status === 200
   });
   sleep_delay()
 
-    let search_query_response_2 = search_query(access_token, contacts[contact_index].id);
-  check(search_query_response_2, {
-      'sent another response message successfully': () =>
-      search_query_response_2.search[0].messages[0].body !== "2"
+  search_query_response = search_query(access_token, contacts[contact_index].id);
+  check(search_query_response, {
+      'sent second flow message successfully': () =>
+      search_query_response.search[0].messages[0].body !== "2"
   });
 }
 

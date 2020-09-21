@@ -3,7 +3,7 @@ import { Options } from 'k6/options';
 
 import {
   sleep_delay
-} from './../helpers';
+} from '../helpers';
 
 import {
   inbound_message,

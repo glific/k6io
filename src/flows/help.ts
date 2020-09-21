@@ -8,6 +8,7 @@ import {
 import {
   inbound_message,
   search_query,
+  getRandomInteger,
   setup as setup_flow
 } from './flow_helpers';
 
@@ -54,8 +55,4 @@ function test_help_flow(access_token: string, contact: any) {
       'sent second flow message successfully': () =>
       search_query_response.search[0].messages[0].body !== "2"
   });
-}
-
-function getRandomInteger(min: number, max: number) : number {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }

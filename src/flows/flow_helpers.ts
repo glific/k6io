@@ -3,7 +3,7 @@ import http from "k6/http";
 import {
   post_gql,
   setup as setup_helper
-} from './../helpers';
+} from '../helpers';
 
 const BASE_URL = 'http://glific.test:4000';
 
@@ -128,4 +128,8 @@ export function count_messages_query(access_token: string, contact: any) : any {
   let variables = { filter }
 
   return post_gql(query, access_token, variables);
+}
+
+export function getRandomInteger(min: number, max: number) : number {
+  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }

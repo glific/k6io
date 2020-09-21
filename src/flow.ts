@@ -55,11 +55,11 @@ export default function (data: any) {
   });
 }
 
-function getRandomInteger(min: number, max: number) {
+function getRandomInteger(min: number, max: number) : number {
   return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
-function contacts_query(access_token: string) {
+function contacts_query(access_token: string) : any {
   let query = `
     query contacts($filter: ContactFilter) {
       contacts(filter: $filter) {
@@ -76,7 +76,7 @@ function contacts_query(access_token: string) {
   return post_gql(query, access_token, variables)
 }
 
-function inbound_message(message_body: string, contact: any) {
+function inbound_message(message_body: string, contact: any) : any {
 
   let message_request_params = {
     "app": "GLIFICAPP",
@@ -112,7 +112,7 @@ function inbound_message(message_body: string, contact: any) {
   return res;
 }
 
-function search_query(access_token: string, contact_id: number) {
+function search_query(access_token: string, contact_id: number) :any {
   let query = `
     query search(
       $saveSearchInput: SaveSearchInput

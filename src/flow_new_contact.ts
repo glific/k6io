@@ -45,75 +45,51 @@ export default function (data: any) {
   });
 
   response = inbound_message("2", contacts[contact_index])
-  check(response, {
-    'received language response message': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
   check(list_messages_query_response, {
-    'sent registration flow message for full name': () =>
+    'received response and sent registration flow message for full name': () =>
       list_messages_query_response.messages.length == contact_messages_count + 6
   });
 
   response = inbound_message(contacts[contact_index].name, contacts[contact_index])
-  check(response, {
-    'received response message for full name': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
   check(list_messages_query_response, {
-    'sent registration flow message for age group': () =>
+    'received response and sent registration flow message for age group': () =>
       list_messages_query_response.messages.length == contact_messages_count + 8
   });
 
   response = inbound_message("4", contacts[contact_index])
-  check(response, {
-    'received response message for age group': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
   check(list_messages_query_response, {
-    'sent message for sol activity': () =>
+    'received response and sent message for sol activity': () =>
       list_messages_query_response.messages.length == contact_messages_count + 11
   });
 
   response = inbound_message("9", contacts[contact_index])
-  check(response, {
-    'received help response message': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
   check(list_messages_query_response, {
-    'sent message for help flow': () =>
+    'received response and sent message for help flow': () =>
       list_messages_query_response.messages.length == contact_messages_count + 13
   });
 
   response = inbound_message("2", contacts[contact_index])
-  check(response, {
-    'received help flow response message': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
   check(list_messages_query_response, {
-    'sent second message for help flow successfully': () =>
+    'received response and sent second message for help flow successfully': () =>
       list_messages_query_response.messages.length == contact_messages_count + 15
   });
 
   response = inbound_message("Hi, is this flow complete now?", contacts[contact_index])
-  check(response, {
-    'received another message': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
@@ -123,11 +99,7 @@ export default function (data: any) {
   });
 }
 
-function getRandomInteger(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
-}
-
-function contacts_query(access_token: string) {
+function contacts_query(access_token: string) : any {
   let query = `
     query contacts($filter: ContactFilter) {
       contacts(filter: $filter) {
@@ -144,7 +116,7 @@ function contacts_query(access_token: string) {
   return post_gql(query, access_token, variables)
 }
 
-function inbound_message(message_body: string, contact: any) {
+function inbound_message(message_body: string, contact: any) : any {
 
   let message_request_params = {
     "app": "GLIFICAPP",
@@ -180,7 +152,7 @@ function inbound_message(message_body: string, contact: any) {
   return res;
 }
 
-function list_messages_query(access_token: string, contact_phone: string) {
+function list_messages_query(access_token: string, contact_phone: string) : any {
   console.log(contact_phone)
   let query = `
     query messages($filter: MessageFilter, $opts: Opts) {
@@ -200,6 +172,54 @@ function list_messages_query(access_token: string, contact_phone: string) {
   }
 
   let variables = { filter }
+
+  return post_gql(query, access_token, variables);
+}
+
+
+function search_query(access_token: string, contact_id: number) :any {
+  let query = `
+    query search(
+      $saveSearchInput: SaveSearchInput
+      $searchFilter: SearchFilter!
+      $contactOpts: Opts!
+      $messageOpts: Opts!
+    ) {
+      search(
+        filter: $searchFilter
+        saveSearchInput: $saveSearchInput
+        contactOpts: $contactOpts
+        messageOpts: $messageOpts
+      ) {
+        messages {
+          id
+          body
+          tags {
+            label
+          }
+        }
+
+        contact {
+          name
+        }
+      }
+    }
+  `;
+
+  let searchFilter = {
+    term: "",
+    id: `${contact_id}`
+  }
+  let messageOpts = {
+    limit: 1,
+    order: "ASC"
+  }
+  let contactOpts = {
+    order: "DESC",
+    limit: 1
+  }
+
+  let variables = { searchFilter, messageOpts, contactOpts }
 
   return post_gql(query, access_token, variables);
 }

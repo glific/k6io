@@ -1,66 +1,17 @@
 import http from "k6/http";
-import { check } from 'k6';
-import { Options } from 'k6/options';
 
 import {
-  sleep_delay,
   post_gql,
   setup as setup_helper
-} from './helpers';
+} from './../helpers';
 
 const BASE_URL = 'http://glific.test:4000';
-
-export let options: Options = {
-    vus: 10,
-    iterations: 20
-};
 
 export const setup = () => {
   let access_token = setup_helper();
   let contacts_query_response = contacts_query(access_token);
   let contacts = contacts_query_response.contacts;
   return { access_token, contacts };
-}
-
-export default function (data: any) {
-  let access_token = data.access_token;
-  let contacts = data.contacts;
-  let contact_index = getRandomInteger(0, contacts.length - 1);
-
-  test_help_flow(access_token, contacts[contact_index])
-}
-
-function test_help_flow(access_token: string, contact: any) {
-  let flow_keyword = "help"
-  let response = inbound_message(flow_keyword, contact)
-  check(response, {
-    'received flow keyword successfully': () =>
-      response.status === 200
-  });
-  sleep_delay()
-
-  let search_query_response = search_query(access_token, contact);
-  check(search_query_response, {
-    'sent first flow message successfully': () =>
-      search_query_response.search[0].messages[0].body !== flow_keyword
-  });
-
-  response = inbound_message("2", contact)
-  check(response, {
-    'received first response message successfully': () =>
-      response.status === 200
-  });
-  sleep_delay()
-
-  search_query_response = search_query(access_token, contact);
-  check(search_query_response, {
-      'sent second flow message successfully': () =>
-      search_query_response.search[0].messages[0].body !== "2"
-  });
-}
-
-function getRandomInteger(min: number, max: number) : number {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }
 
 function contacts_query(access_token: string) : any {
@@ -80,7 +31,7 @@ function contacts_query(access_token: string) : any {
   return post_gql(query, access_token, variables)
 }
 
-function inbound_message(message_body: string, contact: any) : any {
+export function inbound_message(message_body: string, contact: any) : any {
 
   let message_request_params = {
     "app": "GLIFICAPP",
@@ -116,7 +67,7 @@ function inbound_message(message_body: string, contact: any) : any {
   return res;
 }
 
-function search_query(access_token: string, contact: any) : any {
+export function search_query(access_token: string, contact: any) : any {
   let query = `
     query search(
       $saveSearchInput: SaveSearchInput
@@ -159,6 +110,22 @@ function search_query(access_token: string, contact: any) : any {
   }
 
   let variables = { searchFilter, messageOpts, contactOpts }
+
+  return post_gql(query, access_token, variables);
+}
+
+export function count_messages_query(access_token: string, contact: any) : any {
+  let query = `
+    query countMessages($filter: MessageFilter) {
+      countMessages(filter: $filter)
+    }
+  `;
+
+  let filter = {
+    either: `${contact.phone}`
+  }
+
+  let variables = { filter }
 
   return post_gql(query, access_token, variables);
 }

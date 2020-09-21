@@ -9,7 +9,7 @@ import {
 } from './helpers';
 
 const BASE_URL = 'http://glific.test:4000';
-const CONTACTPHONE = `917834811231`
+const CONTACTPHONE = `918971506190`
 
 export let options: Options = {
   // vus: 10,
@@ -20,10 +20,9 @@ export const setup = () => setup_helper()
 
 export default function (access_token: string) {
   let contacts_query_response = contacts_query(access_token);
-  let contact_id = contacts_query_response.contacts[0].id
-  let contact_name = contacts_query_response.contacts[0].name
+  let contact = contacts_query_response.contacts[0]
 
-  let message_mutation_response = create_and_send_message_mutation(access_token, "new message", contact_id);
+  let message_mutation_response = create_and_send_message_mutation(access_token, "new message", contact);
   check(message_mutation_response, {
     'stored outbound message successfully': () =>
       message_mutation_response.createAndSendMessage.message.body === "new message"
@@ -36,14 +35,14 @@ export default function (access_token: string) {
       message_query_response.message.message.body == message_mutation_response.createAndSendMessage.message.body,
   });
 
-  let res = inbound_message("test_message", contact_name)
+  let res = inbound_message("test_message", contact)
   check(res, {
     'stored inbound message successfully': () =>
       res.status === 200
   });
   sleep_delay()
 
-  let search_query_response = search_query(access_token, contact_id);
+  let search_query_response = search_query(access_token, contact);
   check(search_query_response, {
     'retrieved stored inbound message successfully': () =>
       search_query_response.search[0].messages[0].body === "test_message",
@@ -52,7 +51,7 @@ export default function (access_token: string) {
   });
 }
 
-function contacts_query(access_token: string) {
+function contacts_query(access_token: string) : any {
   let query = `
     query contacts($filter: ContactFilter) {
       contacts(filter: $filter) {
@@ -69,7 +68,7 @@ function contacts_query(access_token: string) {
   return post_gql(query, access_token, variables)
 }
 
-function create_and_send_message_mutation(access_token: string, body: string, receiverId: number) {
+function create_and_send_message_mutation(access_token: string, body: string, contact: any) : any {
   let query = `
     mutation createAndSendMessage($input: MessageInput!) {
       createAndSendMessage(input: $input) {
@@ -89,13 +88,13 @@ function create_and_send_message_mutation(access_token: string, body: string, re
     }
   `;
 
-  let input = { body, receiverId }
+  let input = { body, receiverId : contact.id }
   let variables = { input }
 
   return post_gql(query, access_token, variables)
 }
 
-function get_message_by_id_query(access_token: string, id: number) {
+function get_message_by_id_query(access_token: string, id: number) : any {
   let query = `
     query message {
       message(id: "${id}") {
@@ -117,7 +116,7 @@ function get_message_by_id_query(access_token: string, id: number) {
   return post_gql(query, access_token, {})
 }
 
-function inbound_message(message_body: string, contact_name: string) {
+function inbound_message(message_body: string, contact: any) : any {
 
   let message_request_params = {
     "app": "GLIFICAPP",
@@ -127,13 +126,13 @@ function inbound_message(message_body: string, contact_name: string) {
     "payload": {
       "type": "text",
       "id": "ABEGkYaYVSEEAhAL3SLAWwHKeKrt6s3FKB0c",
-      "source": CONTACTPHONE,
+      "source": contact.phone,
       "payload": {
         "text": message_body
       },
       "sender": {
-        "phone": CONTACTPHONE,
-        "name": contact_name,
+        "phone": contact.phone,
+        "name": contact.name,
         "country_code": "91",
         "dial_code": "78xxx1xxx1"
       }
@@ -153,7 +152,7 @@ function inbound_message(message_body: string, contact_name: string) {
   return res;
 }
 
-function search_query(access_token: string, contact_id: number) {
+function search_query(access_token: string, contact: any) : any {
   let query = `
     query search(
       $saveSearchInput: SaveSearchInput
@@ -184,7 +183,7 @@ function search_query(access_token: string, contact_id: number) {
 
   let searchFilter = {
     term: "",
-    id: `${contact_id}`
+    id: `${contact.id}`
   }
   let messageOpts = {
     limit: 1,

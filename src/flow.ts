@@ -35,7 +35,7 @@ export default function (data: any) {
   });
   sleep_delay()
 
-  let search_query_response = search_query(access_token, contacts[contact_index].id);
+  let search_query_response = search_query(access_token, contacts[contact_index]);
   check(search_query_response, {
     'sent first flow message successfully': () =>
       search_query_response.search[0].messages[0].body !== flow_keyword
@@ -48,7 +48,7 @@ export default function (data: any) {
   });
   sleep_delay()
 
-  search_query_response = search_query(access_token, contacts[contact_index].id);
+  search_query_response = search_query(access_token, contacts[contact_index]);
   check(search_query_response, {
       'sent second flow message successfully': () =>
       search_query_response.search[0].messages[0].body !== "2"
@@ -112,7 +112,7 @@ function inbound_message(message_body: string, contact: any) : any {
   return res;
 }
 
-function search_query(access_token: string, contact_id: number) :any {
+function search_query(access_token: string, contact: any) : any {
   let query = `
     query search(
       $saveSearchInput: SaveSearchInput
@@ -143,7 +143,7 @@ function search_query(access_token: string, contact_id: number) :any {
 
   let searchFilter = {
     term: "",
-    id: `${contact_id}`
+    id: `${contact.id}`
   }
   let messageOpts = {
     limit: 1,

@@ -27,8 +27,8 @@ export default function (data: any) {
   let contacts = data.contacts;
   let contact_index = __VU - 1
 
-  let list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  let contact_messages_count = list_messages_query_response.messages.length
+  let count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  let contact_messages_count = count_messages_query_response.countMessages
 
   let flow_keyword = "newcontact"
   let response = inbound_message(flow_keyword, contacts[contact_index])
@@ -38,64 +38,64 @@ export default function (data: any) {
   });
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
     'sent newcontact flow messages': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 3
+      count_messages_query_response.countMessages == contact_messages_count + 3
   });
 
   response = inbound_message("2", contacts[contact_index])
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
     'received response and sent registration flow message for full name': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 6
+      count_messages_query_response.countMessages == contact_messages_count + 6
   });
 
   response = inbound_message(contacts[contact_index].name, contacts[contact_index])
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
     'received response and sent registration flow message for age group': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 8
+      count_messages_query_response.countMessages == contact_messages_count + 8
   });
 
   response = inbound_message("4", contacts[contact_index])
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
     'received response and sent message for sol activity': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 11
+      count_messages_query_response.countMessages == contact_messages_count + 11
   });
 
   response = inbound_message("9", contacts[contact_index])
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
     'received response and sent message for help flow': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 13
+      count_messages_query_response.countMessages == contact_messages_count + 13
   });
 
   response = inbound_message("2", contacts[contact_index])
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
     'received response and sent second message for help flow successfully': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 15
+      count_messages_query_response.countMessages == contact_messages_count + 15
   });
 
   response = inbound_message("Hi, is this flow complete now?", contacts[contact_index])
   sleep_delay()
 
-  list_messages_query_response = list_messages_query(access_token, contacts[contact_index].phone);
-  check(list_messages_query_response, {
-    'No response is sent': () =>
-      list_messages_query_response.messages.length == contact_messages_count + 16
+  count_messages_query_response = count_messages_query(access_token, contacts[contact_index]);
+  check(count_messages_query_response, {
+    'Flow is completed and no message is sent': () =>
+      count_messages_query_response.countMessages == contact_messages_count + 16
   });
 }
 
@@ -152,74 +152,18 @@ function inbound_message(message_body: string, contact: any) : any {
   return res;
 }
 
-function list_messages_query(access_token: string, contact_phone: string) : any {
-  console.log(contact_phone)
+function count_messages_query(access_token: string, contact: any) : any {
   let query = `
-    query messages($filter: MessageFilter, $opts: Opts) {
-      messages(filter: $filter, opts:$opts) {
-        id
-        body
-        contact {
-          id,
-          name
-        }
-      }
+    query countMessages($filter: MessageFilter) {
+      countMessages(filter: $filter)
     }
   `;
 
   let filter = {
-    either: `${contact_phone}`
+    either: `${contact.phone}`
   }
 
   let variables = { filter }
-
-  return post_gql(query, access_token, variables);
-}
-
-
-function search_query(access_token: string, contact_id: number) :any {
-  let query = `
-    query search(
-      $saveSearchInput: SaveSearchInput
-      $searchFilter: SearchFilter!
-      $contactOpts: Opts!
-      $messageOpts: Opts!
-    ) {
-      search(
-        filter: $searchFilter
-        saveSearchInput: $saveSearchInput
-        contactOpts: $contactOpts
-        messageOpts: $messageOpts
-      ) {
-        messages {
-          id
-          body
-          tags {
-            label
-          }
-        }
-
-        contact {
-          name
-        }
-      }
-    }
-  `;
-
-  let searchFilter = {
-    term: "",
-    id: `${contact_id}`
-  }
-  let messageOpts = {
-    limit: 1,
-    order: "ASC"
-  }
-  let contactOpts = {
-    order: "DESC",
-    limit: 1
-  }
-
-  let variables = { searchFilter, messageOpts, contactOpts }
 
   return post_gql(query, access_token, variables);
 }

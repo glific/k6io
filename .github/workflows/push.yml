@@ -20,4 +20,4 @@ jobs:
       - name: Run local k6 test
         uses: k6io/action@v0.1
         with:
-          filename: dist/test1.js
+          filename: dist/message.js

@@ -8,7 +8,6 @@ import {
 import {
   inbound_message,
   search_query,
-  getRandomInteger,
   setup as setup_flow
 } from './flow_helpers';
 
@@ -23,7 +22,7 @@ export const setup = () => setup_flow()
 export default function (data: any) {
   let access_token = data.access_token;
   let contacts = data.contacts;
-  let contact_index = getRandomInteger(0, contacts.length - 1);
+  let contact_index = __VU - 1
 
   test_help_flow(access_token, contacts[contact_index])
 }
@@ -31,10 +30,6 @@ export default function (data: any) {
 function test_help_flow(access_token: string, contact: any) {
   let flow_keyword = "help"
   let response = inbound_message(flow_keyword, contact)
-  check(response, {
-    'received flow keyword successfully': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   let search_query_response = search_query(access_token, contact);
@@ -44,10 +39,6 @@ function test_help_flow(access_token: string, contact: any) {
   });
 
   response = inbound_message("2", contact)
-  check(response, {
-    'received first response message successfully': () =>
-      response.status === 200
-  });
   sleep_delay()
 
   search_query_response = search_query(access_token, contact);

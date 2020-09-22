@@ -33,36 +33,41 @@ function test_help_flow_with_wrong_input(access_token: string, contact: any) {
   sleep_delay()
 
   let res = search_query(access_token, contact);
+  let first_flow_message = res.search[0].messages[0].body;
   check(res, {
     'sent first flow message successfully': () =>
       res.search[0].messages[0].body !== flow_keyword
   });
 
   inbound_message("Wrong input", contact)
+  sleep_delay()
   
   let new_res = search_query(access_token, contact);
   check(new_res, {
-      'sent repeated flow message for wrong input': () =>
-      new_res.search[0].messages[0].body === res.search[0].messages[0].body
+    'sent first flow message for 1st wrong input': () =>
+      new_res.search[0].messages[0].body === first_flow_message
   });
 
   inbound_message("Wrong input 2", contact)
+  sleep_delay()
 
   new_res = search_query(access_token, contact);
   check(new_res, {
-      'sent repeated flow message for 2nd wrong input': () =>
-      new_res.search[0].messages[0].body === res.search[0].messages[0].body
+      'sent first flow message for 2nd wrong input': () =>
+      new_res.search[0].messages[0].body === first_flow_message
   });
 
   inbound_message("Wrong input 3", contact)
+  sleep_delay()
 
   new_res = search_query(access_token, contact);
   check(new_res, {
-      'sent repeated flow message for 3rd wrong input': () =>
-      new_res.search[0].messages[0].body === res.search[0].messages[0].body
+      'sent first flow message for 3rd wrong input': () =>
+      new_res.search[0].messages[0].body === first_flow_message
   });
 
   inbound_message("Wrong input 4", contact)
+  sleep_delay()
 
   new_res = search_query(access_token, contact);
   check(new_res, {

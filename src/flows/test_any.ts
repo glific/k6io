@@ -1,4 +1,5 @@
 import { Options } from 'k6/options';
+import { group } from 'k6';
 
 import {
   getRandomInteger,
@@ -18,14 +19,28 @@ export let options: Options = {
 export const setup = () => setup_flow()
 
 export default function (data: any) {
-  const function_array = [
-    help_flow,
-    new_contact_flow,
-    test_wrong_input,
-    test_other_flow_keywords
-  ]
-
   let random_index = getRandomInteger(0,3)
 
-  function_array[random_index](data)
+  switch (random_index) {
+    case 1:
+      group('help flow', function () {
+        help_flow(data);
+      });
+      break;
+    case 2:
+      group('new contact flow', function () {
+        new_contact_flow(data);
+      });
+      break;
+    case 3:
+      group('wrong input', function () {
+        test_wrong_input(data);
+      });
+      break;
+    case 4:
+      group("input other flow's keyword", function () {
+        test_other_flow_keywords(data);
+      });
+    break;
+  }
 }

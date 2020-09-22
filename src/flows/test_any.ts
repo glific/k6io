@@ -11,9 +11,14 @@ import new_contact_flow from './new_contact';
 import test_wrong_input from './test_wrong_input';
 import test_other_flow_keywords from "./test_other_flow_keywords";
 
+// For now keeping vus and iterations same, 
+// so that different tests don't start for same contact
 export let options: Options = {
     vus: 10,
-    iterations: 20
+    iterations: 10,
+    thresholds: {
+      'http_req_duration': ['p(95) < 400']  // threshold on a standard metric
+    }
 };
 
 export const setup = () => setup_flow()

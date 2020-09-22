@@ -12,7 +12,10 @@ import test_other_flow_keywords from "./test_other_flow_keywords";
 
 export let options: Options = {
     vus: 10,
-    iterations: 20
+    iterations: 20,
+    thresholds: {
+      'http_req_duration': ['p(95) < 400']  // threshold on a standard metric
+    }
 };
 
 export const setup = () => setup_flow()

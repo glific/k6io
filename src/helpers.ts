@@ -23,7 +23,7 @@ export const post_gql = (query: string, access_token: string, variables: any) =>
          'is status 200': (r) => r.status === 200,
      });
 
-     console.log(JSON.stringify(res.json('data')));
+    //  console.log(JSON.stringify(res.json('data')));
     if (res.status !== 200) {
          console.log(JSON.stringify(res.body));
     };

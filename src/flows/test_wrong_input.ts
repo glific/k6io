@@ -24,10 +24,10 @@ export default function (data: any) {
   let contacts = data.contacts;
   let contact_index = __VU - 1
 
-  test_help_flow(access_token, contacts[contact_index])
+  test_help_flow_with_wrong_input(access_token, contacts[contact_index])
 }
 
-function test_help_flow(access_token: string, contact: any) {
+function test_help_flow_with_wrong_input(access_token: string, contact: any) {
   let flow_keyword = "help"
   inbound_message(flow_keyword, contact)
   sleep_delay()

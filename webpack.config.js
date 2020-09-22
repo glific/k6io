@@ -8,7 +8,8 @@ module.exports = {
       message: './message.ts',
       flow_help: './flows/help.ts',
       flow_new_contact: './flows/new_contact.ts',
-      flow_help_wrong_response: './flows/help_wrong_response.ts'
+      flow_test_wrong_input: './flows/test_wrong_input.ts',
+      flow_test_other_flow_keywords: './flows/test_other_flow_keywords.ts'
   },
   output: {
     path: path.join(__dirname, 'dist'),

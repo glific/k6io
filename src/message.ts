@@ -11,8 +11,8 @@ import {
 const BASE_URL = 'http://glific.test:4000';
 
 export let options: Options = {
-  vus: 10,
-  iterations: 20
+  vus: 100,
+  iterations: 100
 };
 
 export const setup = () => {
@@ -25,11 +25,11 @@ export const setup = () => {
 export default function (data: any) {
   let access_token = data.access_token;
   let contacts = data.contacts;
-  let contact_index = getRandomInteger(0, contacts.length - 1);
+  let contact_index = __VU - 1;
   let contact = contacts[contact_index]
 
   group('Inbound message', function () {
-    let res = inbound_message("test_message", contact)
+    let res = inbound_message("inbound_message", contact)
     check(res, {
       'stored inbound message successfully': () =>
         res.status === 200
@@ -39,17 +39,23 @@ export default function (data: any) {
     res = search_query(access_token, contact);
     check(res, {
       'retrieved stored inbound message successfully': () =>
-        res.search[0].messages[0].body === "test_message",
-      'tagged inbound message with Not replied': () =>
-        res.search[0].messages[0].tags[0].label === "Not replied"
+        res.search[0].messages[0].body === "inbound_message"
     });
+
+    // // Will come back to test tagging later
+    // sleep(10)
+    // res = search_query(access_token, contact);
+    // check(res, {
+    //   'tagged inbound message with Not replied': () =>
+    //     res.search[0].messages[0].tags[0].label === "Not replied"
+    // });
   });
 
   group('Outbound message', function () {
-    let res = create_and_send_message_mutation(access_token, "new message", contact);
+    let res = create_and_send_message_mutation(access_token, "outbound message", contact);
     check(res, {
       'stored outbound message successfully': () =>
-        res.createAndSendMessage.message.body === "new message"
+        res.createAndSendMessage.message.body === "outbound message"
     });
     sleep_delay()
 
@@ -208,8 +214,4 @@ function search_query(access_token: string, contact: any) : any {
   let variables = { searchFilter, messageOpts, contactOpts }
 
   return post_gql(query, access_token, variables);
-}
-
-export function getRandomInteger(min: number, max: number) : number {
-  return Math.floor(Math.random() * (max - min + 1) ) + min;
 }

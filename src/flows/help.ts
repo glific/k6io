@@ -22,14 +22,15 @@ export const setup = () => setup_flow()
 export default function (data: any) {
   let access_token = data.access_token;
   let contacts = data.contacts;
-  let contact_index = __VU - 1
+  // Temporary fix to get different contact for all tests
+  let contact_index = __VU * 10 + __ITER
 
   test_help_flow(access_token, contacts[contact_index])
 }
 
 function test_help_flow(access_token: string, contact: any) {
   let flow_keyword = "help"
-  let response = inbound_message(flow_keyword, contact)
+  inbound_message(flow_keyword, contact)
   sleep_delay()
 
   let search_query_response = search_query(access_token, contact);
@@ -38,7 +39,7 @@ function test_help_flow(access_token: string, contact: any) {
       search_query_response.search[0].messages[0].body !== flow_keyword
   });
 
-  response = inbound_message("2", contact)
+  inbound_message("2", contact)
   sleep_delay()
 
   search_query_response = search_query(access_token, contact);

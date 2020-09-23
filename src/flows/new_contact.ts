@@ -21,7 +21,7 @@ export const setup = () => setup_flow()
 export default function (data: any) {
   let access_token = data.access_token;
   let contacts = data.contacts;
-  let contact_index = __VU - 1
+  let contact_index = __VU * 10 + __ITER
 
   test_new_contact_flow(access_token, contacts[contact_index])
 }
